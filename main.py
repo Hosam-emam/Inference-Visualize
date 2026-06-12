@@ -3,7 +3,7 @@ import tempfile
 import streamlit as st
 import pandas as pd
 import numpy as np
-
+from src.models.classes.mars import MARs
 
 # =====================================================
 # Page Config
@@ -26,11 +26,7 @@ def discover_models():
         load available architectures dynamically
     """
     return [
-        "CA-SUM",
-        "VASNet",
-        "PGL-SUM",
-        "DSNet",
-        "MSVA",
+        "MARs",
     ]
 
 
@@ -40,12 +36,16 @@ def discover_feature_extractors():
         scan src/feature_extractors
     """
     return [
-        "GoogleNet",
-        "ResNet50",
-        "CLIP",
-        "ViT",
+        "CLIP Vit Base",
+        "Swin Small",
+        "ConvNext",
     ]
 
+extractor_to_dim = {
+    "CLIP Vit Base": 768,
+    "Swin Small": 768,
+    "ConvNext": 1024
+}
 
 # =====================================================
 # Session State
@@ -100,7 +100,7 @@ st.caption(
 # =====================================================
 # Video Preview
 # =====================================================
-video_path = ""
+video_path = "src/videos/video"
 
 if uploaded_video:
 

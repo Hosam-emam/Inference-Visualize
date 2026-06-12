@@ -1,9 +1,7 @@
 import torch
 import numpy as np
 import os
-from config import get_config
-from model import set_model
-from video_helper import extract_features_from_raw_video
+from models.classes.mars import MARs 
 from kts.cpd_auto import cpd_auto # Import Kernel Temporal Segmentation
 from generate_summary import generate_summary
 from generate_video import compile_summary_video
@@ -14,7 +12,7 @@ from visualize import (
     # plot_summary_budget_distribution
 )
 
-def main():
+def main(input_dim: int): ## Input ##############
     config = get_config()
     os.makedirs(config.output_dir, exist_ok=True)
     video_name = os.path.basename(config.input_video).split('.')[0]
@@ -25,10 +23,7 @@ def main():
     
     # 2. Pipeline Layer 2: Model Prediction Passing
     feature_tensor = torch.from_numpy(features).unsqueeze(0).to(config.device) # Add batch dim
-    model = set_model(conformer_model_dim=config.conformer_model_dim, conformer_nhead=config.conformer_nhead,
-                      conformer_num_blocks=config.conformer_num_blocks, conformer_conv_kernel_sizes=config.conformer_conv_kernel_sizes,
-                      conformer_dropout=config.conformer_dropout, conformer_order=config.conformer_order)
-    
+    model = MARs(input_dim)
     # Load your trained model weights (e.g., from split 1)
     model.load_state_dict(torch.load(f'./weights/{config.dataset_name}/split1.pt', map_location=config.device))
     model.eval()
